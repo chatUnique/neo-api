@@ -1,0 +1,33 @@
+services:
+  neo-api:
+    image: pengzhile/new-api:latest
+    container_name: neo-api
+    restart: always
+    command: --log-dir /app/logs
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./data/neo-api:/data
+      - ./logs:/app/logs
+    env_file: neo-api.env
+    depends_on:
+      - redis
+      - db
+
+  redis:
+    image: redis:7.4
+    container_name: redis
+    restart: always
+
+  db:
+    image: mysql:8.2
+    container_name: mysql
+    restart: always
+    volumes:
+      - ./data/mysql:/var/lib/mysql
+    environment:
+      TZ: Asia/Shanghai
+      MYSQL_ROOT_PASSWORD: 'NeoAPI@123'
+      MYSQL_USER: neo-api
+      MYSQL_PASSWORD: '123456'
+      MYSQL_DATABASE: neo-api
